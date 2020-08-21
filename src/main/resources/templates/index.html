@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragment/layout :: layout (~{::body})}">
+<head>
+    <title>Recipes</title>
+    <meta charset="utf-8">
+</head>
+<body>
+<div class="container pt-3 hero">
+    <div class="row align-items-center text-center text-md-left">
+        <div class="col-lg-6">
+            <h1 class="mb-3 display-3">Find Your Favourite Recipe</h1>
+            <p>Add  Or Browse All Recipes </p>
+        </div>
+        <div class="col-lg-6">
+            <img src="/images/1x/undraw_cooking.png" alt="Image" class="img-fluid">
+        </div>
+    </div>
+</div>
+<div class="site-section">
+    <div class="container">
+        <div class="row recipe-block">
+            <div class="card text-center" th:each="recipe : ${recipes}" style="width: 20rem;">
+                <img th:if="${recipe.imageString != null}" th:src="'data:image/png;base64, ' + ${recipe.imageString}" style="height: 21rem"  class="card-img" alt="...">
+                <img th:if="${recipe.imageString == null}" src="images/1x/no-photo.png"  class="card-img" style="height: 21rem" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${recipe.description}">Card title</h5>
+                    <p class="card-text" th:text="${#strings.abbreviate(recipe.directions,160)}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a th:href="'/recipe/' + ${recipe.id}" class="btn btn-primary mb-2">View Complete Recipe</a>
+                    <a th:href="'/recipe/modify/' + ${recipe.id}" class="btn btn-danger">Edit Recipe</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
