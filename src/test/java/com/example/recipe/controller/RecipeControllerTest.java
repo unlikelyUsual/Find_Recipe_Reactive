@@ -50,7 +50,7 @@ class RecipeControllerTest {
 
     MockMvc mockMvc;
 
-    private final Long RECIPE_ID = 1L;
+    private final String RECIPE_ID = "1";
 
     private Recipe recipeTest;
 
@@ -63,15 +63,15 @@ class RecipeControllerTest {
         recipeTest = new Recipe();
         recipeTest.setId(RECIPE_ID);
 
-        Category categoryOne = new Category(1L,"category 1");
-        Category categoryTwo = new Category(2L,"category 2");
+        Category categoryOne = new Category("1L","category 1");
+        Category categoryTwo = new Category("2L","category 2");
 
         categoryList = new ArrayList<>(2);
         categoryList.add(categoryOne);
         categoryList.add(categoryTwo);
 
         unitOfMeasureList = new HashSet<>();
-        unitOfMeasureList.add(new UnitOfMeasure(1L,"tea spoon"));
+        unitOfMeasureList.add(new UnitOfMeasure("1L","tea spoon"));
 
         mockMvc = MockMvcBuilders.standaloneSetup(recipeController).setControllerAdvice(new ControllerAdviceHandler()).build();
     }
@@ -80,7 +80,7 @@ class RecipeControllerTest {
     @Test
     void getRecipeInfoById() {
 
-        when(recipeService.getRecipeById(anyLong())).thenReturn(recipeTest);
+        when(recipeService.getRecipeById(anyString())).thenReturn(recipeTest);
 
         mockMvc.perform(get("/recipe/"+RECIPE_ID))
                 .andExpect(status().is2xxSuccessful())
@@ -146,7 +146,7 @@ class RecipeControllerTest {
         recipeCommand.setId(RECIPE_ID);
         when(categoryService.fetchAllCategory()).thenReturn(categoryList);
         when(unitOfMeasureService.findAll()).thenReturn(unitOfMeasureList);
-        when(recipeService.getRecipeCommonObjectById(anyLong())).thenReturn(recipeCommand);
+        when(recipeService.getRecipeCommonObjectById(anyString())).thenReturn(recipeCommand);
 
         mockMvc.perform(get("/recipe/modify/" + RECIPE_ID))
                 .andExpect(status().is2xxSuccessful())

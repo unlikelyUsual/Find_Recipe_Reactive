@@ -10,7 +10,6 @@ import com.example.recipe.repositories.RecipeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +35,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe getRecipeById(Long id) {
+    public Recipe getRecipeById(String id) {
         Recipe recipe = recipeRepository.findById(id).orElse(null);
         if(recipe == null){
             throw new NotFoundException("Recipe With ID " + id + " Not Found");
@@ -45,7 +44,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @Transactional
     public RecipeCommand saveOrUpdateRecipe(RecipeCommand recipeCommand) {
         if(recipeCommand.getId() != null){
             Recipe dbRecipe = this.getRecipeById(recipeCommand.getId());
@@ -59,7 +57,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeCommand getRecipeCommonObjectById(Long id) {
+    public RecipeCommand getRecipeCommonObjectById(String id) {
         Recipe recipe = this.getRecipeById(id);
         if(recipe == null) throw new NotFoundException("Recipe Not found");
         return recipeMapper.entityToCommand(recipe);

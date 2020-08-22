@@ -3,19 +3,20 @@ package com.example.recipe.domain;
 import com.example.recipe.enums.Difficulty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 
+@Document
 @Getter
 @Setter
 public class Recipe {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String description;
 
@@ -29,35 +30,26 @@ public class Recipe {
 
     private String url;
 
-    @Lob
     private String directions;
 
-    @Lob
     private Byte[] image;
 
-    @Enumerated(value = EnumType.STRING)
-    private Difficulty difficulty;
-
-    @OneToMany(mappedBy = "recipe",cascade = CascadeType.ALL)
-    private Set<Ingredient> ingredients = new HashSet<>();
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private Notes notes;
-
-    @ManyToMany
-    @JoinTable(name = "recipe_category",joinColumns = @JoinColumn(name = "recipe_id"),inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories = new HashSet<>();
-
-    @Lob
     private String imageString;
 
+    private Difficulty difficulty;
+
+    private Set<Ingredient> ingredients = new HashSet<>();
+
+    private Notes notes;
+
+    private Set<Category> categories = new HashSet<>();
+
+
     public void setNotes(Notes notes) {
-        notes.setRecipe(this);
         this.notes = notes;
     }
 
     public void addIngredient(Ingredient ingredients) {
-        ingredients.setRecipe(this);
         this.ingredients.add(ingredients);
     }
 }

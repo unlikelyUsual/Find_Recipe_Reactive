@@ -40,7 +40,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe/{id}")
-    String getRecipeInfoById(@PathVariable(name = "id") Long id, Model model) {
+    String getRecipeInfoById(@PathVariable(name = "id") String id, Model model) {
          if(id == null){
              return  "index";
          }
@@ -68,7 +68,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe/modify/{id}")
-    String modifyRecipe(@PathVariable(name = "id") Long id , Model model) {
+    String modifyRecipe(@PathVariable(name = "id") String id , Model model) {
         model.addAttribute("categories",categoryService.fetchAllCategory());
         model.addAttribute("uomMap",unitOfMeasureService.findAll());
         model.addAttribute("recipe",recipeService.getRecipeCommonObjectById(id));
@@ -78,7 +78,7 @@ public class RecipeController {
     @PostMapping("/recipe/uploadImage")
     @ResponseBody
     String uploadRecipeImage(MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
-         Long id = multipartHttpServletRequest.getParameter("recipe") != null ? Long.valueOf(multipartHttpServletRequest.getParameter("recipe") ) : null;
+         String id = multipartHttpServletRequest.getParameter("recipe") != null ? multipartHttpServletRequest.getParameter("recipe")  : null;
          Recipe recipe = recipeService.getRecipeById(id);
          MultipartFile file = multipartHttpServletRequest.getFile("file");
          Byte[] bytes = new Byte[file.getBytes().length];

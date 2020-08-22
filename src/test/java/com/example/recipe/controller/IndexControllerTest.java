@@ -54,7 +54,7 @@ class IndexControllerTest {
 
         Recipe recipe = new Recipe();
         Recipe recipe1 = new Recipe();
-        recipe1.setId(33L);
+        recipe1.setId("3");
         Set<Recipe> recipeSet = new HashSet<>();
         recipeSet.add(recipe);
         recipeSet.add(recipe1);

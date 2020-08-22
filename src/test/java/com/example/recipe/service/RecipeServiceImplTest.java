@@ -29,7 +29,7 @@ class RecipeServiceImplTest {
     @Mock
     RecipeMapper recipeMapper;
 
-    private final Long RECIPE_ID = 1L;
+    private final String RECIPE_ID = "1";
 
     private Recipe testRecipe;
 
@@ -57,10 +57,10 @@ class RecipeServiceImplTest {
 
     @Test
     void getRecipeById() {
-        when(recipeRepository.findById(anyLong())).thenReturn(Optional.of(testRecipe));
+        when(recipeRepository.findById(anyString())).thenReturn(Optional.of(testRecipe));
         Recipe recipe = recipeService.getRecipeById(RECIPE_ID);
         assertEquals(RECIPE_ID,recipe.getId());
-        verify(recipeRepository,times(1)).findById(anyLong());
+        verify(recipeRepository,times(1)).findById(anyString());
     }
 
     @Test
@@ -71,7 +71,7 @@ class RecipeServiceImplTest {
         when(recipeMapper.commandToEntity(any(RecipeCommand.class))).thenReturn(testRecipe);
         when(recipeMapper.entityToCommand(any(Recipe.class))).thenReturn(recipeCommand);
         when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(recipeRepository.findById(anyLong())).thenReturn(Optional.of(testRecipe));
+        when(recipeRepository.findById(anyString())).thenReturn(Optional.of(testRecipe));
 
         RecipeCommand savedRecipe = recipeService.saveOrUpdateRecipe(recipeCommand);
 
@@ -86,9 +86,9 @@ class RecipeServiceImplTest {
     void getRecipeCommonObjectById() {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId(RECIPE_ID);
-        when(recipeRepository.findById(anyLong())).thenReturn(Optional.of(testRecipe));
+        when(recipeRepository.findById(anyString())).thenReturn(Optional.of(testRecipe));
         when(recipeMapper.entityToCommand(any(Recipe.class))).thenReturn(recipeCommand);
-        RecipeCommand command = recipeService.getRecipeCommonObjectById(anyLong());
+        RecipeCommand command = recipeService.getRecipeCommonObjectById(anyString());
         assertEquals(RECIPE_ID,command.getId());
     }
 

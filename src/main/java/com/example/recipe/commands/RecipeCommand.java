@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RecipeCommand {
 
-    private Long id;
+    private String id;
 
     @NotBlank
     private String description;
