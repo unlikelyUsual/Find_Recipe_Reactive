@@ -45,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeCommand saveOrUpdateRecipe(RecipeCommand recipeCommand) {
-        if(recipeCommand.getId() != null){
+        if(recipeCommand.getId() != null && !recipeCommand.getId().isEmpty()){
             Recipe dbRecipe = this.getRecipeById(recipeCommand.getId());
             recipeCommand.setImage(dbRecipe.getImage());
             recipeCommand.setImageString(dbRecipe.getImageString());

@@ -21,7 +21,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-@Profile({"default","h2"})
 @Component
 public class RecipeDataLoader implements CommandLineRunner {
 
@@ -37,7 +36,7 @@ public class RecipeDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //recipeRepository.saveAll(getRecipes());
+       // recipeRepository.saveAll(getRecipes());
     }
 
 
