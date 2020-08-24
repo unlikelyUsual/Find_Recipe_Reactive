@@ -9,7 +9,6 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -36,9 +35,10 @@ public class RecipeDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        loadCategories();
-        loadUom();
-        recipeRepository.saveAll(getRecipes());
+        //Todo Check for existing documents
+        //loadCategories();
+        //loadUom();
+        //recipeRepository.saveAll(getRecipes());
     }
 
     private void loadCategories(){
