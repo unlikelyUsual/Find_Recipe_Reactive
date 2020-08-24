@@ -44,7 +44,7 @@ public class RecipeController {
          if(id == null){
              return  "index";
          }
-        Recipe recipe = recipeService.getRecipeById(id);
+        Recipe recipe = recipeService.getRecipeById(id).block();
          model.addAttribute("recipe",recipe);
         return "recipe/viewRecipe";
     }
@@ -63,7 +63,7 @@ public class RecipeController {
             result.getAllErrors().forEach(objectError -> log.error(objectError.toString()));
             return "recipe/recipeForm";
         }
-        RecipeCommand saveRecipe = recipeService.saveOrUpdateRecipe(recipeCommand);
+        RecipeCommand saveRecipe = recipeService.saveOrUpdateRecipe(recipeCommand).block();
         return  "redirect:/recipe/"+ saveRecipe.getId();
     }
 
@@ -79,7 +79,7 @@ public class RecipeController {
     @ResponseBody
     String uploadRecipeImage(MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
          String id = multipartHttpServletRequest.getParameter("recipe") != null ? multipartHttpServletRequest.getParameter("recipe")  : null;
-         Recipe recipe = recipeService.getRecipeById(id);
+         Recipe recipe = recipeService.getRecipeById(id).block();
          MultipartFile file = multipartHttpServletRequest.getFile("file");
          Byte[] bytes = new Byte[file.getBytes().length];
          int i = 0;
@@ -102,7 +102,7 @@ public class RecipeController {
     List<RecipeDTO> searchRecipe(@RequestBody RecipeCommand recipeCommand)  throws Exception{
         List<RecipeDTO> recipes;
         if(recipeCommand.getDescription() == null) recipeCommand.setDescription("");
-        recipes = recipeService.getRecipesByDescription(recipeCommand.getDescription());
+        recipes = recipeService.getRecipesByDescription(recipeCommand.getDescription()).collectList().block();
         return recipes;
     }
 

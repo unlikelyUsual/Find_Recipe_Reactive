@@ -11,8 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Flux;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,12 +55,9 @@ class IndexControllerTest {
         Recipe recipe = new Recipe();
         Recipe recipe1 = new Recipe();
         recipe1.setId("3");
-        Set<Recipe> recipeSet = new HashSet<>();
-        recipeSet.add(recipe);
-        recipeSet.add(recipe1);
-        when(recipeService.getAllRecipes()).thenReturn(recipeSet);
+        when(recipeService.getAllRecipes()).thenReturn(Flux.just(recipe,recipe1));
 
-        ArgumentCaptor<Set<Recipe>> recipeParameter = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor recipeParameter = ArgumentCaptor.forClass(Set.class);
 
         verify(recipeService,times(1)).getAllRecipes();
         verify(model,times(1)).addAttribute(eq("recipes"),recipeParameter.capture());

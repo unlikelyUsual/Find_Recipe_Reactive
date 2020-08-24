@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -27,7 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,7 +83,7 @@ class RecipeControllerTest {
     @Test
     void getRecipeInfoById() {
 
-        when(recipeService.getRecipeById(anyString())).thenReturn(recipeTest);
+        when(recipeService.getRecipeById(anyString())).thenReturn(Mono.just(recipeTest));
 
         mockMvc.perform(get("/recipe/"+RECIPE_ID))
                 .andExpect(status().is2xxSuccessful())
@@ -105,7 +108,7 @@ class RecipeControllerTest {
         try {
             RecipeCommand recipeCommand = new RecipeCommand();
             recipeCommand.setId(RECIPE_ID);
-            when(recipeService.saveOrUpdateRecipe(any())).thenReturn(recipeCommand);
+            when(recipeService.saveOrUpdateRecipe(any())).thenReturn(Mono.just(recipeCommand));
             mockMvc.perform(
                     post("/recipe/form").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             .param("id", "")
@@ -146,7 +149,7 @@ class RecipeControllerTest {
         recipeCommand.setId(RECIPE_ID);
         when(categoryService.fetchAllCategory()).thenReturn(categoryList);
         when(unitOfMeasureService.findAll()).thenReturn(unitOfMeasureList);
-        when(recipeService.getRecipeCommonObjectById(anyString())).thenReturn(recipeCommand);
+        when(recipeService.getRecipeCommonObjectById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(get("/recipe/modify/" + RECIPE_ID))
                 .andExpect(status().is2xxSuccessful())
@@ -180,7 +183,7 @@ class RecipeControllerTest {
         String jsonString = mapper.writeValueAsString(recipe);
         String returnString = mapper.writeValueAsString(recipeDTOS);
 
-        when(recipeService.getRecipesByDescription(anyString())).thenReturn(recipeDTOS);
+        when(recipeService.getRecipesByDescription(anyString())).thenReturn(Flux.just(new RecipeDTO()));
 
         mockMvc.perform(
                 post("/recipe/search")

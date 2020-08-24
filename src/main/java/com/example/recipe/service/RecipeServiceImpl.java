@@ -6,78 +6,68 @@ import com.example.recipe.domain.Recipe;
 import com.example.recipe.dto.RecipeDTO;
 import com.example.recipe.exceptions.NotFoundException;
 import com.example.recipe.mappers.RecipeMapper;
-import com.example.recipe.repositories.RecipeRepository;
+import com.example.recipe.repositories.reactiveRepostories.RecipeReactiveRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private final RecipeRepository recipeRepository;
+    private final RecipeReactiveRepository recipeRepository;
 
     private final RecipeMapper recipeMapper;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository, RecipeMapper recipeMapper) {
+    public RecipeServiceImpl(RecipeReactiveRepository recipeRepository, RecipeMapper recipeMapper) {
         this.recipeRepository = recipeRepository;
         this.recipeMapper = recipeMapper;
     }
 
     @Override
-    public Set<Recipe> getAllRecipes() {
-        Set<Recipe> recipeSet = new HashSet<>();
-        recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add );
-        return recipeSet;
+    public Flux<Recipe> getAllRecipes() {
+       return recipeRepository.findAll();
     }
 
     @Override
-    public Recipe getRecipeById(String id) {
-        Recipe recipe = recipeRepository.findById(id).orElse(null);
-        if(recipe == null){
-            throw new NotFoundException("Recipe With ID " + id + " Not Found");
-        }
-        return recipe;
+    public Mono<Recipe> getRecipeById(String id) {
+        return recipeRepository.findById(id);
     }
 
     @Override
-    public RecipeCommand saveOrUpdateRecipe(RecipeCommand recipeCommand) {
+    public Mono<RecipeCommand> saveOrUpdateRecipe(RecipeCommand recipeCommand) {
         if(recipeCommand.getId() != null && !recipeCommand.getId().isEmpty()){
-            Recipe dbRecipe = this.getRecipeById(recipeCommand.getId());
+            Recipe dbRecipe = this.getRecipeById(recipeCommand.getId()).block();
             recipeCommand.setImage(dbRecipe.getImage());
             recipeCommand.setImageString(dbRecipe.getImageString());
         }
         Recipe recipe = recipeMapper.commandToEntity(recipeCommand);
         recipeCommand.getIngredients().forEach(recipe::addIngredient);
-        Recipe saveRecipe = recipeRepository.save(recipe);
-        return recipeMapper.entityToCommand(saveRecipe);
+        Recipe saveRecipe = recipeRepository.save(recipe).block();
+        return Mono.just(recipeMapper.entityToCommand(saveRecipe));
     }
 
     @Override
-    public RecipeCommand getRecipeCommonObjectById(String id) {
-        Recipe recipe = this.getRecipeById(id);
+    public Mono<RecipeCommand> getRecipeCommonObjectById(String id) {
+        Recipe recipe = this.getRecipeById(id).block();
         if(recipe == null) throw new NotFoundException("Recipe Not found");
-        return recipeMapper.entityToCommand(recipe);
+        return Mono.just(recipeMapper.entityToCommand(recipe));
     }
 
     @Override
-    public Recipe save(Recipe recipe) {
+    public Mono<Recipe> save(Recipe recipe) {
         return recipeRepository.save(recipe);
     }
 
     @Override
-    public List<RecipeDTO> getRecipesByDescription(String description) {
-        List<RecipeDTO> dtoList = new ArrayList<>();
-        recipeRepository.findByDescriptionContainingIgnoreCase(description)
-                .forEach(recipe -> {
+    public Flux<RecipeDTO> getRecipesByDescription(String description) {
+      return recipeRepository.findByDescriptionContainingIgnoreCase(description)
+                .map(recipe -> {
                     RecipeDTO dto = new RecipeDTO();
                     BeanUtils.copyProperties(recipe,dto);
-                    dtoList.add(dto);
+                    return dto;
                 });
-        return dtoList;
     }
 
 }

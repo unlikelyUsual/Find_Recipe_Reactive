@@ -3,22 +3,21 @@ package com.example.recipe.service;
 import com.example.recipe.commands.RecipeCommand;
 import com.example.recipe.domain.Recipe;
 import com.example.recipe.dto.RecipeDTO;
-
-import java.util.List;
-import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface RecipeService  {
 
-    Set<Recipe> getAllRecipes();
+    Flux<Recipe> getAllRecipes();
 
-    Recipe getRecipeById(String id);
+    Mono<Recipe> getRecipeById(String id);
 
-    RecipeCommand saveOrUpdateRecipe(RecipeCommand recipeCommand);
+    Mono<RecipeCommand> saveOrUpdateRecipe(RecipeCommand recipeCommand);
 
-    RecipeCommand getRecipeCommonObjectById(String id);
+    Mono<RecipeCommand> getRecipeCommonObjectById(String id);
 
-    Recipe save(Recipe recipe);
+    Mono<Recipe> save(Recipe recipe);
 
-    List<RecipeDTO> getRecipesByDescription(String description);
+    Flux<RecipeDTO> getRecipesByDescription(String description);
 
 }
