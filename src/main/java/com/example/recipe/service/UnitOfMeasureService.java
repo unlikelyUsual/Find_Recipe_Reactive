@@ -1,10 +1,9 @@
 package com.example.recipe.service;
 
 import com.example.recipe.domain.UnitOfMeasure;
-
-import java.util.Set;
+import reactor.core.publisher.Flux;
 
 public interface UnitOfMeasureService {
 
-    Set<UnitOfMeasure> findAll();
+    Flux<UnitOfMeasure> findAll();
 }

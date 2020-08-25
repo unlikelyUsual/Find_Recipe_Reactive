@@ -1,25 +1,21 @@
 package com.example.recipe.service;
 
 import com.example.recipe.domain.UnitOfMeasure;
-import com.example.recipe.repositories.UnitOfMeasureRepository;
+import com.example.recipe.repositories.reactiveRepostories.UnitOfMeasureReactiveRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Set;
+import reactor.core.publisher.Flux;
 
 @Service
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
-    private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final UnitOfMeasureReactiveRepository unitOfMeasureRepository;
 
-    public UnitOfMeasureServiceImpl(UnitOfMeasureRepository unitOfMeasureRepository) {
+    public UnitOfMeasureServiceImpl(UnitOfMeasureReactiveRepository unitOfMeasureRepository) {
         this.unitOfMeasureRepository = unitOfMeasureRepository;
     }
 
     @Override
-    public Set<UnitOfMeasure> findAll() {
-        Set<UnitOfMeasure> set  = new HashSet<>();
-        unitOfMeasureRepository.findAll().forEach(set::add);
-        return set;
+    public Flux<UnitOfMeasure> findAll() {
+        return unitOfMeasureRepository.findAll();
     }
 }

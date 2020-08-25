@@ -51,8 +51,8 @@ public class RecipeController {
 
     @GetMapping("/recipe/create")
     String getRecipeAddPage(Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll());
+        model.addAttribute("categories",categoryService.fetchAllCategory().collectList().block());
+        model.addAttribute("uomMap",unitOfMeasureService.findAll().collectList().block());
         model.addAttribute("recipe",new RecipeCommand());
         return "recipe/recipeForm";
     }
@@ -69,8 +69,8 @@ public class RecipeController {
 
     @GetMapping("/recipe/modify/{id}")
     String modifyRecipe(@PathVariable(name = "id") String id , Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll());
+        model.addAttribute("categories",categoryService.fetchAllCategory().collectList().block());
+        model.addAttribute("uomMap",unitOfMeasureService.findAll().collectList().block());
         model.addAttribute("recipe",recipeService.getRecipeCommonObjectById(id));
         return "recipe/recipeForm";
     }

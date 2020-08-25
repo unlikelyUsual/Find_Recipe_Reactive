@@ -93,8 +93,8 @@ class RecipeControllerTest {
 
     @Test
     void getRecipeAddPage() throws Exception {
-        when(categoryService.fetchAllCategory()).thenReturn(categoryList);
-        when(unitOfMeasureService.findAll()).thenReturn(unitOfMeasureList);
+        when(categoryService.fetchAllCategory()).thenReturn(Flux.just(new Category("1L","category 1")));
+        when(unitOfMeasureService.findAll()).thenReturn(Flux.just(new UnitOfMeasure("1L","tea spoon")));
 
         mockMvc.perform(get("/recipe/create"))
                 .andExpect(status().is2xxSuccessful())
@@ -147,8 +147,8 @@ class RecipeControllerTest {
     void modifyRecipe() throws Exception {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId(RECIPE_ID);
-        when(categoryService.fetchAllCategory()).thenReturn(categoryList);
-        when(unitOfMeasureService.findAll()).thenReturn(unitOfMeasureList);
+        when(categoryService.fetchAllCategory()).thenReturn(Flux.just(new Category("1L","category 1")));
+        when(unitOfMeasureService.findAll()).thenReturn(Flux.just(new UnitOfMeasure("1L","tea spoon")));
         when(recipeService.getRecipeCommonObjectById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(get("/recipe/modify/" + RECIPE_ID))

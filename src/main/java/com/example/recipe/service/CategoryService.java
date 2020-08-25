@@ -1,11 +1,10 @@
 package com.example.recipe.service;
 
 import com.example.recipe.domain.Category;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface CategoryService {
 
-    List<Category> fetchAllCategory();
+    Flux<Category> fetchAllCategory();
 
 }

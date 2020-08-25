@@ -1,24 +1,20 @@
 package com.example.recipe.service;
 
 import com.example.recipe.domain.Category;
-import com.example.recipe.repositories.CategoryRepository;
+import com.example.recipe.repositories.reactiveRepostories.CategoryReactiveRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository categoryRepository;
+    private final CategoryReactiveRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryReactiveRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public List<Category> fetchAllCategory() {
-        List<Category> categories  = new ArrayList<>();
-        categoryRepository.findAll().forEach(categories::add);
-        return categories;
+    public Flux<Category> fetchAllCategory() {
+        return categoryRepository.findAll();
     }
 }
