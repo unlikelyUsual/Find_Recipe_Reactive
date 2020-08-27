@@ -4,6 +4,7 @@ import com.example.recipe.domain.Recipe;
 import com.example.recipe.service.RecipeService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
+@Disabled
 class IndexControllerTest {
 
     private IndexController indexController;

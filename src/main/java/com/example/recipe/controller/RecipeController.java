@@ -3,24 +3,17 @@ package com.example.recipe.controller;
 import com.example.recipe.commands.RecipeCommand;
 import com.example.recipe.domain.Recipe;
 import com.example.recipe.dto.RecipeDTO;
-import com.example.recipe.exceptions.NotFoundException;
 import com.example.recipe.service.CategoryService;
 import com.example.recipe.service.IngredientService;
 import com.example.recipe.service.RecipeService;
 import com.example.recipe.service.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -51,8 +44,8 @@ public class RecipeController {
 
     @GetMapping("/recipe/create")
     String getRecipeAddPage(Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory().collectList().block());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll().collectList().block());
+        model.addAttribute("categories",categoryService.fetchAllCategory());
+        model.addAttribute("uomMap",unitOfMeasureService.findAll());
         model.addAttribute("recipe",new RecipeCommand());
         return "recipe/recipeForm";
     }
@@ -75,7 +68,7 @@ public class RecipeController {
         return "recipe/recipeForm";
     }
 
-    @PostMapping("/recipe/uploadImage")
+ /*   @PostMapping("/recipe/uploadImage")
     @ResponseBody
     String uploadRecipeImage(MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
          String id = multipartHttpServletRequest.getParameter("recipe") != null ? multipartHttpServletRequest.getParameter("recipe")  : null;
@@ -90,7 +83,7 @@ public class RecipeController {
          recipe.setImageString(Base64.getEncoder().encodeToString(file.getBytes()));
          recipeService.save(recipe);
         return "";
-    }
+    }*/
 
     @GetMapping("/recipe/search")
     String getRecipeSearchPage(){
@@ -106,14 +99,14 @@ public class RecipeController {
         return recipes;
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+/*    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     ModelAndView handleNotFoundException(Exception exception){
         ModelAndView modelAndView  = new ModelAndView();
         modelAndView.setViewName("/errors/404");
         modelAndView.addObject("message",exception.getMessage());
         return modelAndView;
-    }
+    }*/
 
 
 }

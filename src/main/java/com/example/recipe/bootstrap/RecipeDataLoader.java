@@ -36,9 +36,9 @@ public class RecipeDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //Todo Check for existing documents
-        //loadCategories();
-        //loadUom();
-        //recipeRepository.saveAll(getRecipes());
+        loadCategories();
+        loadUom();
+        recipeRepository.saveAll(getRecipes());
     }
 
     private void loadCategories(){
