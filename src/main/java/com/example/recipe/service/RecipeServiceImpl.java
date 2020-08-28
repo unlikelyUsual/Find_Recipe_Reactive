@@ -4,7 +4,6 @@ package com.example.recipe.service;
 import com.example.recipe.commands.RecipeCommand;
 import com.example.recipe.domain.Recipe;
 import com.example.recipe.dto.RecipeDTO;
-import com.example.recipe.exceptions.NotFoundException;
 import com.example.recipe.mappers.RecipeMapper;
 import com.example.recipe.repositories.reactiveRepostories.RecipeReactiveRepository;
 import org.springframework.beans.BeanUtils;
@@ -50,9 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Mono<RecipeCommand> getRecipeCommonObjectById(String id) {
-        Recipe recipe = this.getRecipeById(id).block();
-        if(recipe == null) throw new NotFoundException("Recipe Not found");
-        return Mono.just(recipeMapper.entityToCommand(recipe));
+        return Mono.just(recipeMapper.entityMonoToCommand(this.getRecipeById(id)));
     }
 
     @Override

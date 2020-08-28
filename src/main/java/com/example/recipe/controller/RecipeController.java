@@ -1,7 +1,6 @@
 package com.example.recipe.controller;
 
 import com.example.recipe.commands.RecipeCommand;
-import com.example.recipe.domain.Recipe;
 import com.example.recipe.dto.RecipeDTO;
 import com.example.recipe.service.CategoryService;
 import com.example.recipe.service.IngredientService;
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -37,8 +36,7 @@ public class RecipeController {
          if(id == null){
              return  "index";
          }
-        Recipe recipe = recipeService.getRecipeById(id).block();
-         model.addAttribute("recipe",recipe);
+         model.addAttribute("recipe",recipeService.getRecipeById(id));
         return "recipe/viewRecipe";
     }
 
@@ -62,8 +60,8 @@ public class RecipeController {
 
     @GetMapping("/recipe/modify/{id}")
     String modifyRecipe(@PathVariable(name = "id") String id , Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory().collectList().block());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll().collectList().block());
+        model.addAttribute("categories",categoryService.fetchAllCategory());
+        model.addAttribute("uomMap",unitOfMeasureService.findAll());
         model.addAttribute("recipe",recipeService.getRecipeCommonObjectById(id));
         return "recipe/recipeForm";
     }
@@ -92,10 +90,10 @@ public class RecipeController {
 
     @PostMapping("/recipe/search")
     @ResponseBody
-    List<RecipeDTO> searchRecipe(@RequestBody RecipeCommand recipeCommand)  throws Exception{
-        List<RecipeDTO> recipes;
+    Flux<RecipeDTO> searchRecipe(@RequestBody RecipeCommand recipeCommand)  throws Exception{
+        Flux<RecipeDTO> recipes;
         if(recipeCommand.getDescription() == null) recipeCommand.setDescription("");
-        recipes = recipeService.getRecipesByDescription(recipeCommand.getDescription()).collectList().block();
+        recipes = recipeService.getRecipesByDescription(recipeCommand.getDescription());
         return recipes;
     }
 
