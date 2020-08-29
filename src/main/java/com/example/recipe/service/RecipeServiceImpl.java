@@ -36,20 +36,12 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Mono<RecipeCommand> saveOrUpdateRecipe(RecipeCommand recipeCommand) {
-        if(recipeCommand.getId() != null && !recipeCommand.getId().isEmpty()){
-            Recipe dbRecipe = this.getRecipeById(recipeCommand.getId()).block();
-            recipeCommand.setImage(dbRecipe.getImage());
-            recipeCommand.setImageString(dbRecipe.getImageString());
-        }
-        Recipe recipe = recipeMapper.commandToEntity(recipeCommand);
-        recipeCommand.getIngredients().forEach(recipe::addIngredient);
-        Recipe saveRecipe = recipeRepository.save(recipe).block();
-        return Mono.just(recipeMapper.entityToCommand(saveRecipe));
+        return recipeRepository.save(recipeMapper.commandToEntity(recipeCommand)).map(recipeMapper::entityToCommand);
     }
 
     @Override
     public Mono<RecipeCommand> getRecipeCommonObjectById(String id) {
-        return Mono.just(recipeMapper.entityMonoToCommand(this.getRecipeById(id)));
+        return recipeRepository.findById(id).map(recipeMapper::entityToCommand);
     }
 
     @Override

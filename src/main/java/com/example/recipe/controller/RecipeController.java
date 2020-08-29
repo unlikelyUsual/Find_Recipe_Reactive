@@ -1,19 +1,22 @@
 package com.example.recipe.controller;
 
 import com.example.recipe.commands.RecipeCommand;
+import com.example.recipe.domain.Category;
+import com.example.recipe.domain.UnitOfMeasure;
 import com.example.recipe.dto.RecipeDTO;
+import com.example.recipe.exceptions.NotFoundException;
 import com.example.recipe.service.CategoryService;
 import com.example.recipe.service.IngredientService;
 import com.example.recipe.service.RecipeService;
 import com.example.recipe.service.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-
-import javax.validation.Valid;
 
 @Controller
 @Slf4j
@@ -23,6 +26,13 @@ public class RecipeController {
     private final IngredientService ingredientService;
     private final UnitOfMeasureService unitOfMeasureService;
     private final CategoryService categoryService;
+
+    private WebDataBinder webDataBinder;
+
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder){
+        this.webDataBinder = webDataBinder;
+    }
 
     public RecipeController(RecipeService recipeService, IngredientService ingredientService, UnitOfMeasureService unitOfMeasureService, CategoryService categoryService) {
         this.recipeService = recipeService;
@@ -42,26 +52,23 @@ public class RecipeController {
 
     @GetMapping("/recipe/create")
     String getRecipeAddPage(Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll());
         model.addAttribute("recipe",new RecipeCommand());
         return "recipe/recipeForm";
     }
 
     @PostMapping("/recipe/form")
-    String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand recipeCommand , BindingResult result ) {
+    String saveOrUpdate(@ModelAttribute("recipe") RecipeCommand recipeCommand) {
+        webDataBinder.validate();
+        BindingResult result = webDataBinder.getBindingResult();
         if(result.hasErrors()){
             result.getAllErrors().forEach(objectError -> log.error(objectError.toString()));
             return "recipe/recipeForm";
         }
-        RecipeCommand saveRecipe = recipeService.saveOrUpdateRecipe(recipeCommand).block();
-        return  "redirect:/recipe/"+ saveRecipe.getId();
+        return  "redirect:/recipe/"+ recipeCommand.getId();
     }
 
     @GetMapping("/recipe/modify/{id}")
     String modifyRecipe(@PathVariable(name = "id") String id , Model model) {
-        model.addAttribute("categories",categoryService.fetchAllCategory());
-        model.addAttribute("uomMap",unitOfMeasureService.findAll());
         model.addAttribute("recipe",recipeService.getRecipeCommonObjectById(id));
         return "recipe/recipeForm";
     }
@@ -97,14 +104,23 @@ public class RecipeController {
         return recipes;
     }
 
-/*    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ModelAttribute("uomMap")
+    Flux<UnitOfMeasure> unitOfMeasureFlux(){
+        return unitOfMeasureService.findAll();
+    }
+
+    @ModelAttribute("categories")
+    Flux<Category> categoryFlux(){
+        return categoryService.fetchAllCategory();
+    }
+
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    ModelAndView handleNotFoundException(Exception exception){
-        ModelAndView modelAndView  = new ModelAndView();
-        modelAndView.setViewName("/errors/404");
-        modelAndView.addObject("message",exception.getMessage());
-        return modelAndView;
-    }*/
+    String handleNotFoundException(Exception exception , Model model){
+        model.addAttribute("message",exception.getMessage());
+        return "/errors/404";
+    }
 
 
 }

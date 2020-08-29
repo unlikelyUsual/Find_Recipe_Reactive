@@ -71,7 +71,6 @@ class RecipeServiceImplTest {
         when(recipeMapper.commandToEntity(any(RecipeCommand.class))).thenReturn(testRecipe);
         when(recipeMapper.entityToCommand(any(Recipe.class))).thenReturn(recipeCommand);
         when(recipeRepository.save(any(Recipe.class))).thenReturn(Mono.just(testRecipe));
-        when(recipeRepository.findById(anyString())).thenReturn(Mono.just(testRecipe));
 
         RecipeCommand saveCommand = recipeService.saveOrUpdateRecipe(recipeCommand).block();
 
@@ -87,7 +86,7 @@ class RecipeServiceImplTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId(RECIPE_ID);
         when(recipeRepository.findById(anyString())).thenReturn(Mono.just(testRecipe));
-        when(recipeMapper.entityMonoToCommand(any())).thenReturn(recipeCommand);
+        when(recipeMapper.entityToCommand(any())).thenReturn(recipeCommand);
         RecipeCommand command = recipeService.getRecipeCommonObjectById(anyString()).block();
         assertEquals(RECIPE_ID,command.getId());
     }
