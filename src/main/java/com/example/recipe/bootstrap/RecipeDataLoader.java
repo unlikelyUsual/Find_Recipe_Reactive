@@ -8,6 +8,7 @@ import com.example.recipe.repositories.UnitOfMeasureRepository;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class RecipeDataLoader implements CommandLineRunner {
 
@@ -299,21 +301,30 @@ public class RecipeDataLoader implements CommandLineRunner {
     }
 
     private ByteArrayOutputStream getByteArrayOutputStream(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder().url(url).build();
-
-        Response response = client.newCall(request).execute();
-
-        InputStream inputStream = response.body().byteStream();
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
 
-        byte[] buffer = new byte[1024];
-        int len;
+            OkHttpClient client = new OkHttpClient();
 
-        while ((len = inputStream.read(buffer)) != -1) {
-            os.write(buffer, 0, len);
+            Request request = new Request.Builder().url(url).build();
+
+            Response response = client.newCall(request).execute();
+
+            InputStream inputStream = response.body().byteStream();
+
+
+
+            byte[] buffer = new byte[1024];
+            int len;
+
+            while ((len = inputStream.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+
+        }
+        catch (Exception e){
+         log.error("EXCEPTION::" , e);
+         os = new ByteArrayOutputStream();
         }
         return os;
     }
